@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <a href="https://fonts.googleapis.com/css?family=Open+Sans:600,700" rel="stylesheet"></a> 
+    <title>Calculator</title>
+<style>
+    body{
+    font-family: 'Open Sans',sans-serif;
+    background-color: rgb(248, 93, 248);
+    }
+    #boxcon{
+
+    width: 1000px;
+    height: 1000px;
+    margin: 200px 500px;
+    
+    }
+    #calci{
+        /* margin-top: 200px; */
+    width: 480px;
+    height: 520px;
+    background-color: #1398f0;
+    position: relative;
+    /* border-radius: 50%; */
+}
+
+    #result{
+    /* text-align: left; */
+    height: 100px;
+    /* border-radius: 50%; */
+    background-color: yellow;
+    }
+    #lastEval{
+    text-align: left;
+    height: 20px;
+    margin: 0 20px;
+    padding-top: 20px;
+    font-size: 15px;
+    color: #000;
+    }
+    #answer{
+    text-align: right;
+    height: 60px;
+    margin: 20px 20px;
+    font-size: 30px;
+    }
+    #keyboard{
+    height: 400px;
+    }
+    .operat, .num, .empty{
+    width: 90px;
+    height: 50px;
+    margin: 15px;
+    float: left;
+    border-width: 0;
+    font-weight: bold;
+    font-size: 15px;
+    border-radius: 50%;
+    }
+    .num, .empty{
+    background-color: #eaedef;
+    }
+    .num, .operat{
+    cursor: pointer;
+    }
+    .operat:active, .num:active{
+    font-size: 13px;
+    }
+    
+    button:nth-child(2){
+    font-size: 20px;
+    background-color: #20a6b2;
+    }
+    button:nth-child(3){
+    font-size: 20px;
+    background-color: #6370c4;
+    }
+    button:nth-child(4){
+    font-size: 20px;
+    background-color: #7ab220;
+    }
+    button:nth-child(8){
+    font-size: 20px;
+    background-color: #7e079f;
+    }
+    button:nth-child(12){
+    font-size: 20px;
+    background-color: #f08080;
+    }
+    button:nth-child(17){
+    font-size: 20px;
+    width: 450px;
+    background-color: #f43f8d;
+    border-radius: 0% !important;
+    }
+    button:nth-child(16){
+    font-size: 20px;
+    background-color: #a4f441;
+    }
+</style>
+</head>
+<body>
+    <div id="boxcon">
+        <div id="calci">
+            <div id="result">
+                <div id="lastEval"><p id="lastUsed"></p></div>
+                <div id="answer"><p id="ansRe"></p></div>
+            </div>
+            <div id="keyboard">
+                <button class="num" id="0">0</button>
+                <button class="operat" id="clear">C</button>
+                <button class="operat" id="%">%</button>
+                 <button class="operat" id="/">&#247;</button>
+                <button class="num" id="7">7</button>
+                <button class="num" id="8">8</button>
+                <button class="num" id="9">9</button>
+                <button class="operat" id="*">&times;</button>
+                <button class="num" id="4">4</button>
+                <button class="num" id="5">5</button>
+                <button class="num" id="6">6</button>
+                <button class="operat" id="-">-</button>
+                <button class="num" id="1">1</button>
+                <button class="num" id="2">2</button>
+                <button class="num" id="3">3</button>
+                <button class="operat" id="+">+</button>
+                <button class="operat" id="=">=</button>
+                
+            </div>
+        </div>
+    </div>
+    
+    
+    <script>
+        
+var operat = document.getElementsByClassName("operat");
+for(var i =0;i<operat.length;i++){
+    operat[i].addEventListener('click',function(){
+        if(this.id=="clear"){
+            printHistory("");
+            printOutput("");
+        }
+        else if(this.id=="backspace"){
+            var answer=reverseNumberFormat(getOutput()).toString();
+            if(answer){//if answer has a value
+                answer= answer.substr(0,answer.length-1);
+                printOutput(answer);
+            }
+        }
+        else{
+            var answer=getOutput();
+            var lastEval=getHistory();
+            if(answer==""&&lastEval!=""){
+                if(isNaN(lastEval[lastEval.length-1])){
+                    lastEval= lastEval.substr(0,lastEval.length-1);
+                }
+            }
+            if(answer!="" || lastEval!=""){
+                answer= answer==""?answer:reverseNumberFormat(answer);
+                lastEval=lastEval+answer;
+                if(this.id=="="){
+                    var result=eval(lastEval);
+                    printOutput(result);
+                    printHistory("");
+                }
+                else{
+                    lastEval=lastEval+this.id;
+                    printHistory(lastEval);
+                    printOutput("");
+                }
+            }
+        }
+        
+    });
+}
+
+function getHistory(){
+    return document.getElementById("lastUsed").innerText;
+}
+function printHistory(num){
+    document.getElementById("lastUsed").innerText=num;
+}
+function getOutput(){
+    return document.getElementById("ansRe").innerText;
+}
+function printOutput(num){
+    if(num==""){
+        document.getElementById("ansRe").innerText=num;
+    }
+    else{
+        document.getElementById("ansRe").innerText=getFormattedNumber(num);
+    }    
+}
+function getFormattedNumber(num){
+    if(num=="-"){
+        return "";
+    }
+    var n = Number(num);
+    var value = n.toLocaleString("en");
+    return value;
+}
+function reverseNumberFormat(num){
+    return Number(num.replace(/,/g,''));
+}
+
+
+var number = document.getElementsByClassName("num");
+for(var i =0;i<number.length;i++){
+    number[i].addEventListener('click',function(){
+        var answer=reverseNumberFormat(getOutput());
+        if(answer!=NaN){ //if answer is a number
+            answer=answer+this.id;
+            printOutput(answer);
+        }
+    });
+}
+    </script>
+</body>
+</html>
